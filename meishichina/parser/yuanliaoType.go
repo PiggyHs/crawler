@@ -15,7 +15,7 @@ func ParseYuanliaoType(contexts []byte) engine.ParseResult {
 
 	result := engine.ParseResult{}
 	for _, m := range yuanliaoMatchs {
-		result.Items = append(result.Items, string(m[1]))
+		//result.Items = append(result.Items, string(m[1]))
 		result.Requests = append(result.Requests, engine.Request{
 			Url:        string(m[2]),
 			ParserFunc: ParseYuanliaoList,

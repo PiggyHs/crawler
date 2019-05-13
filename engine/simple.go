@@ -32,7 +32,7 @@ func (*SimpleEngine) Run(seeds ...Request) {
 
 //进行请求网页和解析取值网页内容
 func Worker(r Request) (ParseResult, error) {
-	log.Printf("Fetching %s", r.Url)
+	//log.Printf("Fetching %s", r.Url)
 	body, err := fetcher.Fercher(r.Url)
 	if err != nil {
 		log.Printf("Fetcher error"+

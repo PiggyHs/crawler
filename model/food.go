@@ -2,7 +2,7 @@ package model
 
 type Food struct {
 	DishName    string   //菜名
-	DishImgRes  string   //菜的image
+	DishRes     string   //菜名链接
 	Producer    string   //制作人
 	Description string   //描述
 	Mainrecipe  []Recipe //食材与数量
@@ -13,7 +13,7 @@ type Food struct {
 type Step struct {
 	Desc    string //步骤描述
 	StepNum int    //步骤的顺序
-	ImgRes  string //描述对应的图片路径
+	//ImgRes  string //描述对应的图片路径
 }
 
 //食材

@@ -10,6 +10,11 @@ import (
 var dishNameRes = regexp.MustCompile(
 	`<h1 class="recipe_De_title"><a href="https://home.meishichina.com/recipe-[1-9]+.html" id="recipe_title" title="[^"]+">([^<]+)</a>`)
 
+var dishResRes = regexp.MustCompile(
+	`<h1 class="recipe_De_title"><a href="(https://home.meishichina.com/recipe-[1-9]+.html)" id="recipe_title" title="[^"]+">[^<]+</a>`)
+
+var dishIdRes = regexp.MustCompile(
+	`<h1 class="recipe_De_title"><a href="https://home.meishichina.com/recipe-([1-9]+).html" id="recipe_title" title="[^"]+">[^<]+</a>`)
 var dishImgRes = regexp.MustCompile(
 	`<a class="J_photo" title="[^"]+"><span></span><img src="(https://i8.meishichina.com/attachment/recipe/[0-9]+/[0-9]+/[0-9]+/[0-9a-zA-Z]+.jpg\?x-oss-process=style/p800)" alt="[^"]+"> </a>`)
 
@@ -41,21 +46,31 @@ func ParseRecipe(contents []byte) engine.ParseResult {
 	dish := model.Food{}
 
 	name := extractString(contents, dishNameRes)     //菜名
+	dishRes := extractString(contents, dishResRes)   //链接
 	producer := extractString(contents, producerRes) //制作者
 	desc := extractString(contents, descRes)         //描述
-	imgRes := extractString(contents, dishImgRes)    //菜的图片路径
-	repices := getAllRepice(contents, rePicesRes)    //食材
-	steps := getAllStep(contents, stepsRes)          //步骤
+	//imgRes := extractString(contents, dishImgRes)    //菜的图片路径
+	repices := getAllRepice(contents, rePicesRes) //食材
+	steps := getAllStep(contents, stepsRes)       //步骤
 
 	dish.DishName = name
 	dish.Producer = producer
 	dish.Description = desc
-	dish.DishImgRes = imgRes
+	dish.DishRes = dishRes
+	//dish.DishImgRes = imgRes
 	dish.Mainrecipe = repices
 	dish.Step = steps
 
 	result := engine.ParseResult{
-		Items: []interface{}{dish},
+		Items: []engine.Item{
+			{
+				Url:  dishRes,
+				Type: string("meishiwang"),
+				Id: extractString(
+					contents, dishIdRes),
+				Payload: dish,
+			},
+		},
 	}
 	return result
 	//profile.
@@ -79,7 +94,7 @@ func getAllStep(contents []byte, re *regexp.Regexp) []model.Step {
 	match := re.FindAllSubmatch(contents, -1)
 	for _, m := range match {
 		step := model.Step{}
-		step.ImgRes = string(m[1])
+		//step.ImgRes = string(m[1])
 		num, err := strconv.Atoi(string(m[2]))
 		if err == nil {
 			step.StepNum = num
